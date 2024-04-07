@@ -1,0 +1,39 @@
+* {
+  font-size: 16px;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 1.75rem;
+}
+h3 {
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  background-color: aquamarine;
+  border: 1px solid black;
+  border-radius: 0.75rem;
+  padding-block: 0.7rem;
+  padding-inline: 2rem;
+}
+
+main {
+  width: 600px;
+  height: 600px;
+  border: 3px solid black;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+}
+
+#address-form {
+  padding: 2rem;
+}

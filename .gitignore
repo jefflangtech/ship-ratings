@@ -1,0 +1,15 @@
+# Dependancy directories
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Debug log from npm
+npm-debug.log*
+
+# Log files
+*.log
+
+# Misc
+test-package-rater.js
