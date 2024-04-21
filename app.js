@@ -18,12 +18,14 @@ const path = require('path');
 
 const upload = require('./middleware/upload');
 const parseCsv = require('./middleware/parseCsv');
-const processCsv = require('./middleware/processCsv');
+const processData = require('./middleware/processData');
+const reset = require('./middleware/reset');
 
 const port = process.env.PORT;
 
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -40,11 +42,26 @@ app.get('/api/templates', (req, res) => {
     })
 })
 
+
+
 const router = express.Router();
 
-router.post('/upload', upload.single('file'), parseCsv, processCsv, (req, res) => {
-    res.json({ status: 'True' });
+// ROUTES
+router.post('/upload', upload.single('file'), parseCsv, processData, (req, res) => {
+    if(!res.headersSent) {
+        res.json({ 
+            status: 'True',
+            filename: req.file.originalname,
+            csvDataType: req.file.csvDataType,
+            fileduplicate: req.file.fileduplicate
+        });
+    }
 });
+
+router.post('/upload-confirmation', reset, parseCsv, (req, res) => {
+    res.json({ message: 'Complete'});
+});
+
 
 app.use('/', router);
 

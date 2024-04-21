@@ -21,9 +21,26 @@ h3 {
 button {
   background-color: aquamarine;
   border: 1px solid black;
-  border-radius: 0.75rem;
-  padding-block: 0.7rem;
-  padding-inline: 2rem;
+  padding-inline: 1rem;
+  padding-block: 0.4rem;
+  border-radius: 0.5rem;
+}
+
+.confirm-btn {
+  padding-inline: 1rem;
+  padding-block: 0.4rem;
+  border-radius: 0.5rem;
+  justify-self: end;
+}
+
+.yes {
+  margin-left: auto;
+  background-color: lightskyblue;
+}
+
+.no {
+  margin-left: 2rem;
+  background-color: red;
 }
 
 main {
@@ -34,6 +51,33 @@ main {
   padding: 0.5rem;
 }
 
-#address-form {
+#files-form {
   padding: 2rem;
+}
+
+.response {
+  margin-inline: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: baseline;
+  border-top: 2px solid black;
+}
+
+.response-header {
+  color: red;
+  font-style: italic;
+  margin-bottom: 0.3rem;
+  flex-basis: 100%;
+}
+
+.response-box {
+  padding: 0.5rem;
+}
+
+.response-buttons {
+  margin-left: auto;
+}
+
+.hidden {
+  display: none;
 }

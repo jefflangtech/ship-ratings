@@ -13,6 +13,9 @@ const csvData = {
     getData() {
       return this.data;
     },
+    resetData() {
+      this.data = [];
+    },
     verifyAddresses() {
       if(this.data.length === 0) {
         throw new Error('Empty data array');
@@ -43,6 +46,9 @@ const csvData = {
     getData() {
       return this.data;
     },
+    resetData() {
+      this.data = [];
+    },
     validateHeaders(headers) {
       return this.expectedHeaders.every(header => headers.includes(header));
     }
@@ -62,6 +68,7 @@ function getHandlerforCsv(headers) {
   try {
     const type = determineType(headers);
     return { 
+      type: type,
       setData: csvData[type].setData.bind(csvData[type]),
       getData: csvData[type].getData.bind(csvData[type]) 
     };
@@ -80,4 +87,18 @@ function getData(type) {
   return csvData[type].data;
 }
 
-module.exports = { getHandlerforCsv, isReady, getData };
+function resetData(type) {
+  if(type) {
+    csvData[type].resetData();
+  }
+  else {
+    csvData.forEach(dataType => dataType.resetData());
+  }
+}
+
+module.exports = { 
+  getHandlerforCsv, 
+  isReady, 
+  getData, 
+  resetData 
+};

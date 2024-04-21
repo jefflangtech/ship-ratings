@@ -1,5 +1,6 @@
 # ship-ratings
 A bulk ship ratings app
 
-This is a different change, made in the local repo.
-Making a simple update so that I can verify my connection is working as expected.
+Next:
+Duplicate file handling is functioning at a basic level. Need the UI to update after a Yes or No confirmation on how
+to handle the duplicate files. 

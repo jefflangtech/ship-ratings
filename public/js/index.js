@@ -1,7 +1,10 @@
 const templateContainer = document.getElementById('template-container');
-const addressForm = document.getElementById('address-form');
+const filesForm = document.getElementById('files-form');
 const formHeader = document.getElementById('form-header');
+const confirmButtons = document.querySelectorAll('.confirm-btn');
 const templatesDir = '/api/templates';
+
+const responseContainer = document.getElementById('response-container');
 
 // Provided with a directory will return an array of file names inside
 async function fetchFilesArray(fileDirectory) {
@@ -17,25 +20,45 @@ async function fetchFilesArray(fileDirectory) {
   }
 }
 
-function uploadFile() {
-  const formData = new FormData(addressForm);
+async function uploadFile() {
+  const formData = new FormData(filesForm);
+  try {
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    if (!response.ok) {
+      throw new Error('Network response error');
+    }
+    const result = await response.json();
+    filesForm.reset();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error('Error during post action:', error);
+    throw error; // Re-throw the error if you want to handle it later
+  }
+}
 
-  fetch('/upload', {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => {
+async function confirmData(data) {
+
+  try {
+    const response = await fetch('/upload-confirmation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
     if(!response.ok) {
       throw new Error('Network response error');
     }
-    return response.json();
-  })
-  .then(result => {
-    console.log(result);
-  })
-  .catch(error => {
-    console.error('Error during post action', error);
-  });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error during post action: ', error);
+    throw error;
+  }
 }
 
 
@@ -51,6 +74,19 @@ function createTemplateLinks(links) {
   });
 }
 
+function updateFileResponse(element, type, filename) {
+
+  element.replaceChildren();
+
+  const p1 = document.createElement('p');
+  const p2 = document.createElement('p');
+  p1.textContent = `Data uploaded: ${type}`;
+  element.appendChild(p1);
+  p2.textContent = `File name: ${filename}`;
+  element.appendChild(p2);
+
+}
+
 
 fetchFilesArray(templatesDir)
   .then(files => {
@@ -60,8 +96,58 @@ fetchFilesArray(templatesDir)
     console.error('Error when fetching files:', error);
   })
 
+function updateButtonAttributes(button, filename, fileuploadname, filepath, csvDataType) {
+  button.setAttribute('data-filename', filename);
+  button.setAttribute('data-fileuploadname', fileuploadname);
+  button.setAttribute('data-filepath', filepath);
+  button.setAttribute('data-csvdatatype', csvDataType);
+}
+
 // Event listeners
-addressForm.addEventListener('submit', function(event) {
+filesForm.addEventListener('submit', async function(event) {
   event.preventDefault();
-  uploadFile();
+  result = await uploadFile();
+
+  elTarget = document.getElementById(result.csvDataType);
+  // console.dir(elTarget);
+
+  if(result.fileduplicate) {
+    // console.log(result);
+    let msg = elTarget.previousElementSibling;
+    let btns = elTarget.nextElementSibling;
+
+    msg.classList.toggle('hidden');
+    Array.from(btns.children).forEach(btn => { 
+      btn.classList.toggle('hidden');
+      updateButtonAttributes(btn, result.filename, result.fileuploadname, result.filepath, result.csvDataType);
+    });
+  }
+  else {
+    updateFileResponse(elTarget, result.csvDataType, result.filename);
+  }
+
 });
+
+confirmButtons.forEach(btn => btn.addEventListener('click', async function(event) {
+  
+  const btn = event.target;
+  const filename = btn.getAttribute('data-filename');
+  const fileuploadname = btn.getAttribute('data-fileuploadname');
+  const filepath = btn.getAttribute('data-filepath');
+  const csvDataType = btn.getAttribute('data-csvDataType');
+  const reset = btn.classList.contains('yes');
+
+  console.log(filename, csvDataType, reset);
+
+  const dataToSend = {
+    filename: filename,
+    fileuploadname: fileuploadname,
+    filepath: filepath,
+    csvDataType: csvDataType,
+    resetFlag: reset
+  };
+
+  result = await confirmData(dataToSend);
+  console.log(result);
+
+}));

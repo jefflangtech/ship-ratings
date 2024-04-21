@@ -14,11 +14,32 @@
     <main>
       <h1>Shipping Rates for Petdoors.com</h1>
 
-      <form action="" method="post" id="address-form" enctype="multipart/form-data">
-        <h3 id="form-header">Upload Ship-From and Ship-To Address File</h3>
+      <form action="" method="post" id="files-form" enctype="multipart/form-data">
+        <h3 id="form-header">Upload Templates</h3>
         <input type="file" name="file" id="file-addresses" accept=".csv">
         <button>Submit</button>
       </form>
+
+      <div id="response-container">
+        <div class="response">
+          <h4 class="response-header hidden">Would you like to replace this file?</h4>
+          <div id="addresses" class="response-box"></div>
+          <div class="response-buttons">
+            <button id="address-update-yes" class="hidden confirm-btn yes">Yes</button>
+            <button id="address-update-no" class="hidden confirm-btn no">No</button>
+          </div>
+        </div>
+
+        <div class="response">
+          <h4 class="response-header hidden">Would you like to replace this file?</h4>
+          <div id="packages" class="response-box"></div>
+          <div class="response-buttons">
+            <button id="package-update-yes" class="hidden confirm-btn yes">Yes</button>
+            <button id="package-update-no" class="hidden confirm-btn no">No</button>
+          </div>
+        </div>
+      </div>
+
       <hr>
 
 
