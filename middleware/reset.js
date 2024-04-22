@@ -16,7 +16,7 @@ const reset = (req, res, next) => {
     unlinkAsync(req.file.path)
       .then(() => {
         // console.log('File successfully deleted');
-        return res.json({ Message: 'File delete complete' });
+        return res.status(200).json({ type: req.body.csvDataType });
         next();
       })
       .catch((error) => {

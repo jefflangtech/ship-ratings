@@ -60,7 +60,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   align-content: baseline;
-  border-top: 2px solid black;
+  /* border-top: 2px solid black; */
 }
 
 .response-header {

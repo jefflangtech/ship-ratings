@@ -3,8 +3,32 @@ const filesForm = document.getElementById('files-form');
 const formHeader = document.getElementById('form-header');
 const confirmButtons = document.querySelectorAll('.confirm-btn');
 const templatesDir = '/api/templates';
-
 const responseContainer = document.getElementById('response-container');
+
+const socket = new WebSocket(`ws://${window.location.host}/sockets`);
+// Test code for the web socket
+socket.onmessage = function (event) {
+  let msg = JSON.parse(event.data);
+  console.log(msg);
+  let statusUpdate = JSON.parse(event.data);
+};
+
+socket.onopen = function(event) {
+  console.log('Websocket connection opened');
+  socket.send('Hello from the client');
+};
+
+socket.onerror = function(event) {
+  console.error('Websocket error:', event);
+};
+
+socket.onclose = function(event) {
+  console.log('Websocket connection closed:', event);
+};
+
+
+
+
 
 // Provided with a directory will return an array of file names inside
 async function fetchFilesArray(fileDirectory) {
@@ -103,23 +127,47 @@ function updateButtonAttributes(button, filename, fileuploadname, filepath, csvD
   button.setAttribute('data-csvdatatype', csvDataType);
 }
 
+function removeButtonAttributes(button) {
+  button.removeAttribute('data-filename');
+  button.removeAttribute('data-fileuploadname');
+  button.removeAttribute('data-filepath');
+  button.removeAttribute('data-csvdatatype');
+}
+
+function confirmResponseUpdateUI(res) {
+
+  const elTarget = document.getElementById(res.type);
+  const msg = elTarget.previousElementSibling;
+  const btns = elTarget.nextElementSibling;
+  
+  msg.classList.toggle('hidden');
+  Array.from(btns.children).forEach(btn => { 
+    btn.classList.toggle('hidden');
+    removeButtonAttributes(btn);
+  });
+
+}
+
+
+
 // Event listeners
 filesForm.addEventListener('submit', async function(event) {
   event.preventDefault();
   result = await uploadFile();
 
-  elTarget = document.getElementById(result.csvDataType);
-  // console.dir(elTarget);
+  const elTarget = document.getElementById(result.csvDataType);
 
+  // If a duplicate address or package file template is uploaded after one 
+  // has already been submitted
   if(result.fileduplicate) {
-    // console.log(result);
-    let msg = elTarget.previousElementSibling;
-    let btns = elTarget.nextElementSibling;
+    const msg = elTarget.previousElementSibling;
+    const btns = elTarget.nextElementSibling;
 
     msg.classList.toggle('hidden');
     Array.from(btns.children).forEach(btn => { 
       btn.classList.toggle('hidden');
       updateButtonAttributes(btn, result.filename, result.fileuploadname, result.filepath, result.csvDataType);
+      updateFileResponse(elTarget, result.csvDataType, result.filename);
     });
   }
   else {
@@ -148,6 +196,6 @@ confirmButtons.forEach(btn => btn.addEventListener('click', async function(event
   };
 
   result = await confirmData(dataToSend);
-  console.log(result);
+  confirmResponseUpdateUI(result);
 
 }));
